@@ -1,0 +1,6 @@
+D:/E-Projects/vibecoding/PixivBriefing/pixiv_data/2026-07-18/fulls/discovery_06_138439805.jpg|3508x2480
+D:/E-Projects/vibecoding/PixivBriefing/pixiv_data/2026-07-20/fulls/ranking_03_147316745.jpg|1536x864
+D:/E-Projects/vibecoding/PixivBriefing/pixiv_data/2026-07-21/fulls/ranking_03_147316745.jpg|1536x864
+D:/E-Projects/vibecoding/PixivBriefing/pixiv_data/2026-07-22/fulls/discovery_10_140238870.jpg|1920x1080
+D:/E-Projects/vibecoding/PixivBriefing/pixiv_data/2026-07-22/fulls/ranking_07_147420426.jpg|3840x2436
+D:/E-Projects/vibecoding/PixivBriefing/pixiv_data/2026-07-24/fulls/discovery_10_129713196.jpg|1882x1326

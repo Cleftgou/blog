@@ -1,0 +1,42 @@
+# build output
+dist/
+
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+.vercel
+
+package-lock.json
+bun.lockb
+yarn.lock
+
+# ide
+.idea
+*.iml
+
+# runtime logs
+.dev.log
+.build.log
+.preview.log
+
+# album original images (only keep thumbnails + index in repo)
+public/images/album/*.jpg
+public/images/album/*.jpeg
+public/images/album/*.png
+public/images/album/*.webp
