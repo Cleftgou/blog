@@ -82,3 +82,52 @@ Fuwari — 基于 [Astro](https://astro.build) 5.13 + Svelte 5 + Tailwind CSS 3 
 - 主题使用单一色调值（`--hue` CSS 变量）生成整个色板。主题色通过 `siteConfig.themeColor.hue` 配置（默认 250）。
 - 已设置 `trailingSlash: "always"` — 所有 URL 以 `/` 结尾。
 - CSS 同时使用 Tailwind 层和 Stylus（`.styl`）文件。PostCSS 配置支持 `postcss-import` + `postcss-nesting`。
+
+## 文章更新 / 新增流程
+
+当用户要求"把某篇笔记放到博客"或"更新已有文章"时：
+
+### 来源与目标
+- 用户本地 Markdown 文章存放在 `D:/F-Documents/User/MarkDown/`（按技术主题命名的 `.md` 文件）。
+- 博客文章目录：`src/content/posts/`。文件名建议用英文 slug（如 `linux-dev-env.md`）。
+
+### 更新已有文章
+- 如果博客已存在同名文章，只替换正文，**保留 frontmatter 不动**（title/published/image/tags/category/draft）。
+- 用 `tail -n +3 源文件 >> 目标文件` 跳过源文件开头的 `# H1 标题` + 空行，避免和 frontmatter title 重复。
+
+### 新增文章：补 frontmatter
+
+新文章必须补齐 Fuwari 要求的 frontmatter（schema 在 `src/content/config.ts`）：
+
+```yaml
+---
+title: <从文件名或 H1 提取>
+published: <文件创建日期，stat 读 Birth，格式 YYYY-MM-DD>
+description: <一两句话概括内容>
+image: /images/covers/cover_XX.jpg
+tags: [<根据内容技术栈推断 3-6 个关键词>]
+category: <Java / 前端 / 运维 / 数据库 / ...根据内容判断>
+draft: false
+---
+```
+
+### 挑选封面图
+- 封面图来源：`D:/E-Projects/vibecoding/PixivBriefing/pixiv_data/`（按日期分目录，含 `fulls/` 原图）。
+- **优先选横向图**（宽 > 高，宽 ≥ 1920），尺寸过大（> 8MB）或 PNG 格式跳过，选同一张图非重复随机挑。
+- 用 sharp 扫描元数据筛选横向候选，`fs.copyFileSync` 复制到 `public/images/covers/`，命名 `cover_XX.jpg`（递增序号，避开已用文件名）。
+- frontmatter 中 `image: /images/covers/cover_XX.jpg`。已有封面的文章跳过不替换。
+
+### 相册加图
+- 运行 `scripts/gen-album.mjs` 重新生成缩略图 + `public/images/album/index.json`。
+- 相册页（`src/pages/album.astro`）：生产环境 `data-pswp-src` 指向缩略图（而非原图，原图已 gitignore），开发环境指向原图。
+- 相册原图放入 `public/images/album/` 后立即被 `.gitignore` 忽略（只提交缩略图 + index.json），仓库保持轻量。
+
+### 标签推断
+根据文章主题推断 tags，常见标签池：
+- **Java 系**：`Java`, `Spring`, `SpringBoot`, `MyBatis`, `JDBC`, `Maven`, `Servlet`, `JSP`
+- **前端系**：`JavaScript`, `Ajax`, `jQuery`, `Vue`, `前端`
+- **运维系**：`Linux`, `Docker`, `CentOS`, `Nginx`, `MySQL`, `Jenkins`, `Kafka`, `Redis`, `运维`, `环境配置`
+- **数据库**：`MySQL`, `JDBC`, `数据库`
+- **计算机基础**：`计算机网络`, `算法`, `设计模式`
+
+category 根据内容归到一个大类下，如 `Java`、`前端`、`运维`、`数据库`、`计算机基础`。
