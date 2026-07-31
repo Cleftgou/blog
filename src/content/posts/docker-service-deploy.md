@@ -2,7 +2,7 @@
 title: Docker 部署常用服务实战
 published: 2024-06-01
 description: CentOS 7 下 Docker 安装配置，以及 MySQL、Redis、Minio、WordPress、Portainer、Nacos、Kafka 等常用服务的容器化部署笔记。
-image: /images/covers/cover_11.jpg
+image: /images/covers/cover_19.jpg
 tags: [Docker, MySQL, Redis, Minio, Nacos, Kafka, Portainer, 运维, 环境配置]
 category: 运维
 draft: false
