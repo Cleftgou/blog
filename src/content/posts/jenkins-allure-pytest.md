@@ -2,7 +2,7 @@
 title: Jenkins + Allure + Pytest 流水线搭建实践
 published: 2024-06-20
 description: 基于 Docker 部署 Jenkins，集成 Allure 测试报告与 Pytest 框架，搭建自动化测试流水线的完整配置笔记。
-image: /images/covers/cover_14.jpg
+image: /images/covers/cover_20.jpg
 tags: [Jenkins, Allure, Pytest, CI/CD, Docker, 自动化测试, 运维]
 category: 运维
 draft: false
