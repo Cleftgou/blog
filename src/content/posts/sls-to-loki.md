@@ -2,7 +2,7 @@
 title: 从阿里云 SLS 到本地 Loki 模拟实践
 published: 2026-07-30
 description: 了解 SLS 云日志服务，记录个人使用经历与踩坑故事，并在本地用 Loki + Promtail + Grafana 搭建一套轻量级日志系统的完整笔记。
-image: /images/covers/cover_15.jpg
+image: /images/covers/cover_16.jpg
 tags: [Loki, SLS, Grafana, Promtail, Docker, 日志系统, 运维]
 category: 运维
 draft: false
