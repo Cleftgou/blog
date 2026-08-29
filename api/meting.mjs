@@ -11,48 +11,56 @@
  */
 const UPSTREAM = "https://api.injahow.cn/meting/";
 
-const cors = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "*",
-  "Cache-Control": "no-cache",
-};
-
-export default async function handler(req) {
-  const url = new URL(req.url);
-
-  if (req.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: cors });
-  }
-  if (req.method !== "GET") {
-    return new Response("Method Not Allowed", { status: 405, headers: cors });
-  }
-
-  const server = url.searchParams.get("server") || "netease";
-  const type = url.searchParams.get("type") || "playlist";
-  const id = url.searchParams.get("id") || "";
-  const r = url.searchParams.get("r") || "";
-
-  // 只代理歌单；url/pic/lrc 由浏览器直连 injahow
-  if (type !== "playlist") {
-    return new Response("Not Found", { status: 404, headers: cors });
-  }
-
-  const target =
-    `${UPSTREAM}?server=${encodeURIComponent(server)}` +
-    `&type=playlist&id=${encodeURIComponent(id)}` +
-    (r ? `&r=${encodeURIComponent(r)}` : "");
-
+export default async function handler(req, res) {
   try {
-    const res = await fetch(target, { signal: AbortSignal.timeout(20000) });
-    if (!res.ok) {
-      return new Response(`Upstream error: ${res.status}`, { status: 502, headers: cors });
+    // Vercel 会填充 req.query；取不到时手动解析 req.url
+    let q = req.query || {};
+    if (Object.keys(q).length === 0) {
+      const search = String(req.url || "").split("?")[1] || "";
+      q = Object.fromEntries(new URLSearchParams(search));
     }
-    const data = await res.text();
-    return new Response(data, {
-      headers: { ...cors, "Content-Type": "application/json; charset=utf-8" },
-    });
+
+    const setCors = () => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "*");
+    };
+
+    if (req.method === "OPTIONS") {
+      setCors();
+      return res.status(204).end();
+    }
+    if (req.method !== "GET") {
+      setCors();
+      return res.status(405).end();
+    }
+
+    const server = q.server || "netease";
+    const type = q.type || "playlist";
+    const id = q.id || "";
+    const r = q.r || "";
+
+    // 只代理歌单；url/pic/lrc 由浏览器直连 injahow
+    if (type !== "playlist") {
+      setCors();
+      return res.status(404).json({ error: "only playlist is proxied" });
+    }
+
+    const target =
+      `${UPSTREAM}?server=${encodeURIComponent(server)}` +
+      `&type=playlist&id=${encodeURIComponent(id)}` +
+      (r ? `&r=${encodeURIComponent(r)}` : "");
+
+    const up = await fetch(target, { signal: AbortSignal.timeout(20000) });
+    if (!up.ok) {
+      setCors();
+      return res.status(502).json({ error: `Upstream error: ${up.status}` });
+    }
+    const text = await up.text();
+    setCors();
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.status(200).send(text);
   } catch (e) {
-    return new Response(`Proxy error: ${e.message}`, { status: 502, headers: cors });
+    return res.status(500).json({ error: e.message, stack: String(e.stack || "").split("\n").slice(0, 5) });
   }
 }
